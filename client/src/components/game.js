@@ -12,7 +12,7 @@ const Game = () => {
 
   const handleClick = i => {
     console.log(i)
-    if (history[i]) return
+    if (history[i] || winner) return
     setHistory(previous => {
       previous[i] = xO
       return previous
@@ -21,13 +21,15 @@ const Game = () => {
   }
 
   return (
-    <>
-      <h1>Tic Tac Toe</h1>
+    <div className="py-12 text-center space-y-4">
+      <h1 className=" text-lg font-bold">Tic Tac Toe</h1>
       <Board squares={history} onClick={handleClick} />
       <div className="info-wrapper">
-        <h3>{winner ? 'Winner: ' + winner : 'Next Player: ' + xO}</h3>
+        <h3 className="font-medium">
+          {winner ? 'Winner: ' + winner : 'Next Player: ' + xO}
+        </h3>
       </div>
-    </>
+    </div>
   )
 }
 
