@@ -38,6 +38,7 @@ io.on('connection', socket => {
   })
   socket.on('play', ({prev_player, xo, history}) => {
     console.log({prev_player, xo, history})
+    console.log(prev_player == game.player1 ? game.player : game.player1)
     io.to('room').emit('change', {
       history: history,
       xo: xo,

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import toast, {Toaster} from 'react-hot-toast'
 
 import io from 'socket.io-client'
@@ -15,7 +15,7 @@ const Game = ({option}) => {
   const winner = calculateWinner(history)
   // to know who is the next player :
   const [xO, setXo] = useState('x')
-  const [me, setMe] = useState(null)
+  const me = useRef(null)
   const [play, setPlay] = useState(true)
   const [room, setRoom] = useState({
     id: null,
@@ -30,8 +30,8 @@ const Game = ({option}) => {
     setHistory(previous => {
       previous[i] = xO
       socket.emit('play', {
-        prev_player: me,
-        xo: previous === 'x' ? 'o' : 'x',
+        prev_player: me.current,
+        xo: xO === 'x' ? 'o' : 'x',
         history: previous,
       })
       return previous
@@ -45,7 +45,8 @@ const Game = ({option}) => {
       id: e.target.children[0].value,
       player1: e.target.children[1].value,
     }))
-    setMe(e.target.children[1].value)
+    me.current = e.target.children[1].value
+    console.log(me.current)
   }
   useEffect(() => {
     if (!room.id) return
@@ -63,8 +64,9 @@ const Game = ({option}) => {
     })
     socket.on('change', ({history, xo, next_player}) => {
       console.log({history, xo, next_player})
-      console.log(`this ${me},this next player ${next_player}`)
-      setPlay(next_player === me)
+      console.log(`this ${me.current},this next player ${next_player}`)
+      console.log(next_player === me.current)
+      setPlay(next_player === me.current)
       setXo(xo)
       setHistory(history)
     })
@@ -72,8 +74,8 @@ const Game = ({option}) => {
 
   const createGame = e => {
     e.preventDefault()
-    setMe(e.target.children[0].value)
-    localStorage.setItem('me', me)
+    me.current = e.target.children[0].value
+    console.log(e.target.children[0].value)
     setRoom(previous => ({
       ...previous,
       player: e.target.children[0].value,
